@@ -1,13 +1,44 @@
+const{testConection} = require("../services/tableService");
 module.exports = async function (context, req) {
-    context.log('JavaScript HTTP trigger function processed a request.');
+    try{
 
-    const name = (req.query.name || (req.body && req.body.name));
-    const responseMessage = name
-        ? "Hello, " + name + ". This HTTP triggered function executed successfully."
-        : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
+        await testConection();
+        // if(!req.body){
+        //     context.res = {
+        //         status: 400,
+        //         body: "no request body, please pass a request body"
+        //     };
+        //     return;
+        // }
 
-    context.res = {
-        // status: 200, /* Defaults to 200 */
-        body: responseMessage
-    };
+        // const {name, roles, lobbies} = req.body;
+
+        // if(!name || !roles || !lobbies){
+        //     context.res = {
+        //         status: 400,
+        //         body: "name, roles or lobbies are Null, please pass all required parameters"
+        //     };
+        //     return;
+        // }
+
+        // const entity = {
+        //     PartitionKey: {'_': name},
+        //     RowKey: {'_':'1'},
+        //     roles: {'_': roles},
+        //     lobbies: {'_': lobbies}
+        // }
+        
+        // const result = await insertEntity("Users", entity);
+
+        // context.res = {
+        //     body: result
+        // };
+
+    }catch(error){
+        context.res = {
+            status: 500, 
+            body: error.message,       
+        };
+    }
+    
 }
