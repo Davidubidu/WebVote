@@ -4,7 +4,9 @@ const {buildResponse, httpHandler} = require("../Middleware/afUtils");
 module.exports = async function (context) {
     const handlers = [
         { method: 'get', function: handleGet }, 
-        { method: 'post', function: handlePost }
+        { method: 'post', function: handlePost },
+        { method: 'put', function: handlePut },
+        { method: 'delete', function: handleDelete }
     ];
     await httpHandler(context, handlers);
 }
@@ -12,6 +14,15 @@ module.exports = async function (context) {
 async function handleGet(context) {
 
     // Logic here
+    const req = context.req;
+    try{
+
+    }catch(error){
+        context.res = {
+            status: 500, 
+            body: error.message,       
+        };
+    }
 }
 
 async function handlePost(context) {
@@ -36,7 +47,35 @@ async function handlePost(context) {
             return;
         }
 
-        await tableService.insertUser({name, roles, password});
+        await tableService.insertUser(context, {name, roles, password});
+
+    }catch(error){
+        context.res = {
+            status: 500, 
+            body: error.message,       
+        };
+    }
+}
+
+async function handlePut(context) {
+
+    // Logic here
+    const req = context.req;
+    try{
+
+    }catch(error){
+        context.res = {
+            status: 500, 
+            body: error.message,       
+        };
+    }
+}
+
+async function handleDelete(context) {
+
+    // Logic here
+    const req = context.req;
+    try{
 
     }catch(error){
         context.res = {

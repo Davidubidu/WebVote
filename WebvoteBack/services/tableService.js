@@ -7,15 +7,12 @@ const timeStamp = + new Date();
 const databaseName = `webvote`;
 const collectionName = `Users`;
 
-async function insertUser(user) {
+async function insertUser(context, user) {
 
     try {
-        const client = new MongoClient(mongoConnectionString);
+        const client = context.db.client;
 
-        // connect to the server
-        await client.connect();
-
-        const options = client.options
+        const options = client.options;
         console.log(`Options:\n${Object.keys(options).map(key => `\t${key}: ${options[key]}\n`)}`);
 
         const db = client.db(databaseName);
@@ -28,19 +25,14 @@ async function insertUser(user) {
         const userToInsert = {name: user.name, roles: user.roles, password: user.password}
         await collection.insertOne(userToInsert);
 
-        client.close()
-
     } catch(error) {
         console.log(error);
     }  
 }
 
-async function getUser(userId) {
+async function getUser(context, usersIds) {
     try {
-        const client = new MongoClient(mongoConnectionString);
-
-        // connect to the server
-        await client.connect();
+        const client = context.db.client;
 
         const options = client.options
         console.log(`Options:\n${Object.keys(options).map(key => `\t${key}: ${options[key]}\n`)}`);
@@ -52,21 +44,17 @@ async function getUser(userId) {
         console.log(`collection:\n${Object.keys(collection).map(key => `\t${key}: ${collection[key]}\n`)}`);
 
         //finds the user object corresponding with the filter object passed from the front
-        await collection.findOne(userId);
-
-        client.close()
+        //_id is the name of the id field in the database, usersIds must be an array of ids
+        await collection.find({_id: { $in: usersIds}});
 
     } catch(error) {
         console.log(error);
     }
 }
 
-async function deleteUser(userId){
+async function deleteUser(context, userId){
     try {
-        const client = new MongoClient(mongoConnectionString);
-
-        // connect to the server
-        await client.connect();
+        const client = context.db.client;
 
         const options = client.options
         console.log(`Options:\n${Object.keys(options).map(key => `\t${key}: ${options[key]}\n`)}`);
@@ -80,19 +68,14 @@ async function deleteUser(userId){
         //deletes the user corresponding with the filter object passed from the front
         await collection.findOneAndDelete(userId);
 
-        client.close()
-
     } catch(error) {
         console.log(error);
     }
 }
 
-async function updateUser(userModification, userId){
+async function updateUser(context, userModification, userId){
     try {
-        const client = new MongoClient(mongoConnectionString);
-
-        // connect to the server
-        await client.connect();
+        const client = context.db.client;
 
         const options = client.options
         console.log(`Options:\n${Object.keys(options).map(key => `\t${key}: ${options[key]}\n`)}`);
@@ -103,15 +86,13 @@ async function updateUser(userModification, userId){
         const collection = db.collection(collectionName);
         console.log(`collection:\n${Object.keys(collection).map(key => `\t${key}: ${collection[key]}\n`)}`);
 
-        //filter to finde the user to update, works only on Id
-        const filter = {'_id': userId}
-        //query with the changes to make in the user object
+        //filter to finde the user to update, works only on Id. userId should be an Id object
+        const filter = {_id: userId}
+        //query with the changes to make in the user object. userModification should be a JSON with the changes to be applied to each field. ex: {field1: "mod"}
         const updateQuery = {
             $set: {userModification}
         }
-        await collection.updateOne(updateQuery);
-
-        client.close()
+        await collection.updateOne(filter, updateQuery);
 
     } catch(error) {
         console.log(error);
