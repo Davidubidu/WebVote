@@ -1,5 +1,22 @@
 const tableService = require("../services/tableService");
-module.exports = async function (context, req) {
+const {buildResponse, httpHandler} = require("../Middleware/afUtils");
+
+module.exports = async function (context) {
+    const handlers = [
+        { method: 'get', function: handleGet }, 
+        { method: 'post', function: handlePost }
+    ];
+    await httpHandler(context, handlers);
+}
+
+async function handleGet(context) {
+
+    // Logic here
+}
+
+async function handlePost(context) {
+    const req = context.req;
+
     try{
         if(!req.body){
             context.res = {
@@ -27,5 +44,4 @@ module.exports = async function (context, req) {
             body: error.message,       
         };
     }
-    
 }
