@@ -1,0 +1,7 @@
+<p>landing works!</p>
+<app-button [name]="buttonName" (clicked)="sessionButtonClicked()"></app-button>
+<app-card-list
+  *ngIf="sessionCardList && sessionCardList.length"
+  [data]="sessionCardList"
+  (clicked)="onSessionClicked($event)"
+></app-card-list>

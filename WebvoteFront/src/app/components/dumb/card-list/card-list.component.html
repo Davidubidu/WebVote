@@ -1,0 +1,7 @@
+<div *ngFor="let card of data">
+  <app-card
+    [title]="card.title"
+    [subtitle]="card.subtitle"
+    (click)="cardClicked(card?.id)"
+  ></app-card>
+</div>
